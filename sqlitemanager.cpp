@@ -9,10 +9,13 @@
 #include <ctime>
 #include <cstdlib>
 #include <assert.h>
+#include <QFile>
+#include <QTextStream>
 
 const static QString dbName = "./sentence.sqlite";
 
-sqliteManager::sqliteManager(){
+sqliteManager::sqliteManager()
+{
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbName);
     if( !initTable() )
@@ -20,23 +23,37 @@ sqliteManager::sqliteManager(){
 
     // For random shuffle
     std::srand(unsigned (std::time(0)));
+
+    logFile = new QFile();
+    logFile->setFileName("log.txt");
+    logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
+    logger = new QTextStream(logFile);
 }
 
 sqliteManager::~sqliteManager(){
-
+    if( logger != NULL )
+        delete logger;
+    if( logFile->isOpen() )
+        logFile->close();
+    if( logFile != NULL )
+        delete logFile;
 }
 
 bool sqliteManager::initTable(){
-    if( !db.open() )
+    if( !db.open() ){
+        *logger << db.lastError().text() << endl;
         return false;
+    }
 
     QSqlQuery qry;
     qry.prepare("CREATE TABLE IF NOT EXISTS sentence (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, english blob not null,"
                 " korean blob not null, word blob not null, word2 blob not null, correct int not null, incorrect int not null"
                 ", studied boolean not null)");
     if( !qry.exec() ){
-        qDebug() << qry.lastError();
         db.close();
+
+        *logger << qry.lastError().text() << endl;
+
         return false;
     }
 
@@ -65,6 +82,7 @@ int sqliteManager::getAllCount(countMode mode){
     qry.prepare(queryMessage);
 
     if( !qry.exec() ){
+        *logger << qry.lastError().text() << endl;
         db.close();
         return -1;
     }
@@ -253,7 +271,7 @@ int sqliteManager::getSentenceLevel(QString eSentence){
 
     if( (correct-incorrect) >= 5 )
         res = level::easy;
-    else if( (incorrect-correct) <= -3 )
+    else if( (correct-incorrect) <= -3 )
         res = level::hard;
 
     return res;

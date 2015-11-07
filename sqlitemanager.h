@@ -7,6 +7,9 @@
 #include <vector>
 #include <algorithm>
 
+#include <QFile>
+#include <QTextStream>
+
 #include "sentence.h"
 
 using namespace std;
@@ -32,6 +35,9 @@ private:
         hard,
         end = 3,
     };
+
+    QFile *logFile;
+    QTextStream *logger;
 
 public:
     sqliteManager();
