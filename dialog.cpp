@@ -156,7 +156,6 @@ void Dialog::on_pushButtonStart_clicked(){
 
         ui->pushButtonAnswer->setEnabled(true);
         ui->pushButtonNext->setEnabled(true);
-        ui->pushButtonRetry->setEnabled(true);
     }
     else{
         ui->textEditAnswerInput->setEnabled(false);
@@ -235,35 +234,50 @@ void Dialog::on_pushButtonAnswer_clicked()
     QStringList sAnswer = answer.split(" ");
     QString coloredAnswer = "";
 
-    int inCnt = 0;
-    for(int i=0; i<sAnswer.size(); ++i){
-        QString temp = sAnswer[i];
+    bool *checker = new bool[sInput.size()];
+    memset(checker, 0, sizeof(bool)*sInput.size());
 
-        if( inCnt != sInput.size() ){
-            if( temp.compare(sInput[inCnt]) == 0)
-                coloredAnswer += "<font color='blue'><b>" + sInput[inCnt++] + " </b></font>";
-            else{
-                QString dash = "";
-                dash.fill('-', temp.length());
-                coloredAnswer += "<font color='red'><b> " + dash + " </b></font>";
+    int findCount = 0;
+    for(int i=0; i<sAnswer.size(); ++i){
+        QString tempAns = sAnswer[i];
+
+        int find = -1;
+        for(int j=0; j<sInput.size() && j<=i; ++j){
+            QString tempIn = sInput[j];
+
+            // equal and not checked word only.
+            if( tempAns.compare(tempIn) == 0 && !checker[j] ){
+                find = j;
+                checker[j] = true;
+                findCount++;
+                break;
             }
         }
-        else{
+
+        if( find == -1 ){
             QString dash = "";
-            dash.fill('-', temp.length());
+            dash.fill('-', tempAns.length());
             coloredAnswer += "<font color='red'><b> " + dash + " </b></font>";
+        }
+        else{
+            coloredAnswer += "<font color='blue'><b>" + sInput[find] + " </b></font>";
         }
     }
 
-    coloredAnswer.append("(" + QString::number( (int)(inCnt/(double)sAnswer.size()* 100.) ) + "% correct!)");
+    delete[] checker;
+
+    coloredAnswer.append("(" + QString::number( (int)(findCount/(double)sAnswer.size()* 100.) ) + "% correct!)");
 
     QString output = "<b>* Input&nbsp;&nbsp;&nbsp;: </b>" + coloredAnswer + "<br><b>* Answer : </b><font color='blue'><b>" + answer + "</b>";
     ui->textEditAnswer->setText(output);
 
     ui->pushButtonAnswer->setEnabled(false);
 
+    // enable retry
+    ui->pushButtonRetry->setEnabled(true);
+
     if( !isRetry )
-        dbManager.setStudyResult(answer, sAnswer.size() == inCnt);
+        dbManager.setStudyResult(answer, sAnswer.size() == findCount);
 }
 
 void Dialog::on_pushButtonNext_clicked()
@@ -302,6 +316,9 @@ void Dialog::on_pushButtonNext_clicked()
     // clear previous input, question
     ui->textEditAnswer->clear();
     ui->textEditAnswerInput->clear();
+
+    // retry disable
+    ui->pushButtonRetry->setEnabled(false);
 
     refreshCount();
 }

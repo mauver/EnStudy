@@ -9,8 +9,6 @@
 #include <ctime>
 #include <cstdlib>
 #include <assert.h>
-#include <QFile>
-#include <QTextStream>
 
 const static QString dbName = "./sentence.sqlite";
 
@@ -23,25 +21,13 @@ sqliteManager::sqliteManager()
 
     // For random shuffle
     std::srand(unsigned (std::time(0)));
-
-    logFile = new QFile();
-    logFile->setFileName("log.txt");
-    logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
-    logger = new QTextStream(logFile);
 }
 
 sqliteManager::~sqliteManager(){
-    if( logger != NULL )
-        delete logger;
-    if( logFile->isOpen() )
-        logFile->close();
-    if( logFile != NULL )
-        delete logFile;
 }
 
 bool sqliteManager::initTable(){
     if( !db.open() ){
-        *logger << db.lastError().text() << endl;
         return false;
     }
 
@@ -51,9 +37,6 @@ bool sqliteManager::initTable(){
                 ", studied boolean not null)");
     if( !qry.exec() ){
         db.close();
-
-        *logger << qry.lastError().text() << endl;
-
         return false;
     }
 
@@ -82,7 +65,6 @@ int sqliteManager::getAllCount(countMode mode){
     qry.prepare(queryMessage);
 
     if( !qry.exec() ){
-        *logger << qry.lastError().text() << endl;
         db.close();
         return -1;
     }
