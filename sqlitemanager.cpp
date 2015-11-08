@@ -129,7 +129,7 @@ bool sqliteManager::getStudySentences(vector<Sentence> & studyList, bool isAll, 
         if(isEasy){
             queryMessage.append(" where (correct-incorrect) >= 5");
             if( isHard )
-                queryMessage.append(" and (correct-incorrect) <= -3");
+                queryMessage.append(" or (correct-incorrect) <= -3");
         }
         else if(isHard){
             queryMessage.append(" where (correct-incorrect) <= -3");
@@ -143,6 +143,8 @@ bool sqliteManager::getStudySentences(vector<Sentence> & studyList, bool isAll, 
         db.close();
         return false;
     }
+
+    qDebug() << qry.lastQuery();
 
     studyList.clear();
 

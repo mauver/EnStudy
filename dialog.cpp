@@ -142,6 +142,9 @@ void Dialog::on_pushButtonStart_clicked(){
         if( dbManager.getStudySentences(studyList, ui->checkBoxSavedText->isChecked(),
                                         ui->checkBoxFriendlyText->isChecked(), ui->checkBoxDifficultText->isChecked()) ){
             ui->progressBarProgress->setRange(0, studyList.size());
+
+            qDebug() << studyList.size();
+
             on_pushButtonNext_clicked();
         }else{
             QMessageBox::warning(this, tr("error"), tr("Failed to get the sentence! please contact to developer!"));
@@ -284,7 +287,7 @@ void Dialog::on_pushButtonNext_clicked()
 {
     if( currentSentIdx != -1 && ui->textEditAnswer->toPlainText().trimmed().isEmpty() ){
         int res = QMessageBox::question(this, tr("Skip check"), tr("Skip this question? You didn't answer!"));
-        if( res != QMessageBox::Ok )
+        if( res != QMessageBox::Yes )
             return;
     }
 
