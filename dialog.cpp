@@ -371,6 +371,10 @@ void Dialog::on_pushButtonSearch_clicked()
         return;
     }
 
+    // replace "'" to "''" for sql query
+    searchKeyword = searchKeyword.replace("'", "''");
+
+
     initModifyTab();
 
     if( dbManager.searchSentence(searchList, idList, searchKeyword) ){
@@ -418,6 +422,12 @@ void Dialog::on_pushButtonChange_clicked()
     QString korean = ui->textEditSelectKorean->toPlainText().toLower().trimmed();
     QString word = ui->lineEditSelectWord->text().toLower().trimmed();
     QString word2 = ui->lineEditSelectWord2->text().toLower().trimmed();
+
+    // replace "'" to "''" for sql query
+    english = english.replace("'", "''");
+    korean = korean.replace("'", "''");
+    word = word.replace("'", "''");
+    word2 = word2.replace("'", "''");
 
     if( dbManager.modifySentence(id, english, korean, word, word2) ){
         QMessageBox::information(this, tr("Modify notification"), tr("Ok!"));

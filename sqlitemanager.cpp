@@ -213,6 +213,7 @@ bool sqliteManager::modifySentence(int id, QString eSentence, QString kSentence,
                 .arg(eSentence, kSentence, word, word2, QString::number(id)));
     if( !qry.exec() ){
         db.close();
+        qDebug() << qry.lastQuery();
         return false;
     }
 
