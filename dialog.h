@@ -63,12 +63,6 @@ private slots:
 
     void on_pushButtonStart_clicked();
 
-    void on_checkBoxSavedText_clicked(bool checked);
-
-    void on_checkBoxFriendlyText_clicked();
-
-    void on_checkBoxDifficultText_clicked();
-
     void on_pushButtonAnswer_clicked();
 
     void on_pushButtonNext_clicked();
@@ -82,6 +76,16 @@ private slots:
     void on_pushButtonChange_clicked();
 
     void on_pushButtonDelete_clicked();
+
+    void on_radioButtonAll_clicked(bool checked);
+
+    void on_radioButtonStudied_clicked(bool checked);
+
+    void on_radioButtonNotStudied_clicked(bool checked);
+
+    void on_radioButtonHard_clicked(bool checked);
+
+    void on_radioButtonNew_clicked(bool checked);
 
 private:
     Ui::Dialog *ui;

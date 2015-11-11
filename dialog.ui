@@ -157,87 +157,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>60</y>
-        <width>622</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_9">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <item>
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>학습 범위 선택</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
-             <item>
-              <widget class="QCheckBox" name="checkBoxSavedText">
-               <property name="text">
-                <string>저장된 문장</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="checkBoxFriendlyText">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>익숙한 문장</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="checkBoxDifficultText">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>어려운 문장</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonStart">
-         <property name="text">
-          <string>Study Start</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonHelp">
-         <property name="text">
-          <string>Help</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="layoutWidget_2">
       <property name="geometry">
        <rect>
@@ -266,6 +185,82 @@
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_6">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>541</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>학습 범위 선택</string>
+      </property>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>20</y>
+         <width>461</width>
+         <height>18</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QRadioButton" name="radioButtonAll">
+          <property name="text">
+           <string>모든 문장</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButtonStudied">
+          <property name="text">
+           <string>학습한 문장</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButtonNotStudied">
+          <property name="text">
+           <string>학습안한 문장</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButtonHard">
+          <property name="text">
+           <string>어려운 문장</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButtonNew">
+          <property name="text">
+           <string>새로운 문장</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="pushButtonStart">
+      <property name="geometry">
+       <rect>
+        <x>560</x>
+        <y>60</y>
+        <width>81</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Study Start</string>
+      </property>
      </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_2">
@@ -941,10 +936,7 @@
   <tabstop>lineEditWord</tabstop>
   <tabstop>lineEditWord2</tabstop>
   <tabstop>pushButtonSave</tabstop>
-  <tabstop>checkBoxDifficultText</tabstop>
-  <tabstop>checkBoxSavedText</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>checkBoxFriendlyText</tabstop>
   <tabstop>pushButtonAnswer</tabstop>
   <tabstop>pushButtonNext</tabstop>
   <tabstop>pushButtonRetry</tabstop>
@@ -952,7 +944,6 @@
   <tabstop>textEditAnswerInput</tabstop>
   <tabstop>textEditAnswer</tabstop>
   <tabstop>pushButtonStart</tabstop>
-  <tabstop>pushButtonHelp</tabstop>
   <tabstop>textEditInputEnglish</tabstop>
  </tabstops>
  <resources/>

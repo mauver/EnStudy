@@ -28,9 +28,11 @@ private:
         begin = 0,
         all = 0,
         studied,
+        not_studied,
         easy,
         hard,
-        end = 3,
+        newly,
+        end = 5,
     };
 
 public:
@@ -39,11 +41,13 @@ public:
 
     int getAllCount(countMode mode = all);
     int getStudiedCount();
+    int getNotStudiedCount();
     int getEasyCount();
     int getHardCount();
+    int getNewCount();
     int checkSentence(QString eSentence);
     bool insertSentence(QString eSentence, QString kSentence, QString word, QString word2);
-    bool getStudySentences(vector<Sentence> & studyList, bool isAll, bool isEasy, bool isHard);
+    bool getStudySentences(vector<Sentence> & studyList, bool isAll, bool isStudied, bool isNotStudied, bool isHard, bool isNew);
     bool setStudyResult(QString eSentence, bool isCorrect);
     bool searchSentence(vector<Sentence>& searchList, vector<int>& idList, QString eSentence);
     bool modifySentence(int id, QString eSentence, QString kSentence, QString word, QString word2);

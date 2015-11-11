@@ -34,7 +34,7 @@ bool sqliteManager::initTable(){
     QSqlQuery qry;
     qry.prepare("CREATE TABLE IF NOT EXISTS sentence (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, english blob not null,"
                 " korean blob not null, word blob not null, word2 blob not null, correct int not null, incorrect int not null"
-                ", studied boolean not null)");
+                ", studied boolean not null, time text not null)");
     if( !qry.exec() ){
         db.close();
         return false;
@@ -56,10 +56,14 @@ int sqliteManager::getAllCount(countMode mode){
 
     if( mode == studied )
         queryMessage.append(" where studied == 1");
+    else if( mode == not_studied )
+        queryMessage.append(" where studied == 0");
     else if( mode == easy )
         queryMessage.append(" where (correct-incorrect) >= 5");
     else if( mode == hard )
         queryMessage.append(" where (correct-incorrect) <= -3");
+    else if( mode == newly )
+        queryMessage.append(" where time==date('now')");
 
     QSqlQuery qry;
     qry.prepare(queryMessage);
@@ -80,12 +84,20 @@ int sqliteManager::getStudiedCount(){
     return getAllCount(studied);
 }
 
+int sqliteManager::getNotStudiedCount(){
+    return getAllCount(not_studied);
+}
+
 int sqliteManager::getEasyCount(){
     return getAllCount(easy);
 }
 
 int sqliteManager::getHardCount(){
     return getAllCount(hard);
+}
+
+int sqliteManager::getNewCount(){
+    return getAllCount(newly);
 }
 
 int sqliteManager::checkSentence(QString eSentence){
@@ -119,21 +131,21 @@ bool sqliteManager::insertSentence(QString eSentence, QString kSentence, QString
     return true;
 }
 
-bool sqliteManager::getStudySentences(vector<Sentence> & studyList, bool isAll, bool isEasy, bool isHard){
+bool sqliteManager::getStudySentences(vector<Sentence> & studyList, bool isAll, bool isStudied, bool isNotStudied, bool isHard, bool isNew){
     if( !db.open() )
         return false;
 
     QString queryMessage = "select * from sentence";
 
     if( !isAll ){
-        if(isEasy){
-            queryMessage.append(" where (correct-incorrect) >= 5");
-            if( isHard )
-                queryMessage.append(" or (correct-incorrect) <= -3");
-        }
-        else if(isHard){
+        if(isStudied)
+            queryMessage.append(" where studied==1");
+        else if(isNotStudied)
+            queryMessage.append(" where studied==0");
+        else if(isHard)
             queryMessage.append(" where (correct-incorrect) <= -3");
-        }
+        else if(isNew)
+            queryMessage.append(" where time==date('now')");
     }
 
     QSqlQuery qry;
@@ -143,8 +155,6 @@ bool sqliteManager::getStudySentences(vector<Sentence> & studyList, bool isAll, 
         db.close();
         return false;
     }
-
-    qDebug() << qry.lastQuery();
 
     studyList.clear();
 

@@ -139,11 +139,9 @@ void Dialog::on_pushButtonStart_clicked(){
         }
 
         // getting the study sentence
-        if( dbManager.getStudySentences(studyList, ui->checkBoxSavedText->isChecked(),
-                                        ui->checkBoxFriendlyText->isChecked(), ui->checkBoxDifficultText->isChecked()) ){
+        if( dbManager.getStudySentences(studyList, ui->radioButtonAll->isChecked(), ui->radioButtonStudied->isChecked(),
+            ui->radioButtonNotStudied->isChecked(), ui->radioButtonHard->isChecked(), ui->radioButtonNew->isChecked()) ){
             ui->progressBarProgress->setRange(0, studyList.size());
-
-            qDebug() << studyList.size();
 
             on_pushButtonNext_clicked();
         }else{
@@ -153,9 +151,6 @@ void Dialog::on_pushButtonStart_clicked(){
 
         ui->textEditAnswerInput->setEnabled(true);
         ui->pushButtonStart->setText("Study Stop");
-        ui->checkBoxSavedText->setEnabled(false);
-        ui->checkBoxDifficultText->setEnabled(false);
-        ui->checkBoxFriendlyText->setEnabled(false);
 
         ui->pushButtonAnswer->setEnabled(true);
         ui->pushButtonNext->setEnabled(true);
@@ -174,58 +169,40 @@ void Dialog::on_pushButtonStart_clicked(){
         ui->textEditAnswerInput->clear();
         ui->labelContainWord->clear();
 
-        ui->checkBoxSavedText->setEnabled(true);
-
-        if( !ui->checkBoxSavedText->isChecked() ){
-            ui->checkBoxDifficultText->setEnabled(true);
-            ui->checkBoxFriendlyText->setEnabled(true);
-        }
-
         ui->pushButtonAnswer->setEnabled(false);
         ui->pushButtonNext->setEnabled(false);
         ui->pushButtonRetry->setEnabled(false);
     }
 }
 
-void Dialog::on_checkBoxSavedText_clicked(bool checked){
-    if( checked ){
-        ui->checkBoxFriendlyText->setChecked(true);
-        ui->checkBoxFriendlyText->setEnabled(false);
-        ui->checkBoxDifficultText->setChecked(true);
-        ui->checkBoxDifficultText->setEnabled(false);
-
+void Dialog::on_radioButtonAll_clicked(bool checked)
+{
+    if( checked )
         ui->labelSelectedText->setText(QString::number(dbManager.getAllCount()));
-    }
-    else{
-         ui->checkBoxFriendlyText->setEnabled(true);
-         ui->checkBoxDifficultText->setEnabled(true);
-
-         ui->labelSelectedText->setText(QString::number(dbManager.getEasyCount() + dbManager.getHardCount()));
-    }
 }
 
-void Dialog::on_checkBoxFriendlyText_clicked()
+void Dialog::on_radioButtonStudied_clicked(bool checked)
 {
-    int res = 0;
-
-    if( ui->checkBoxFriendlyText->isChecked() )
-        res += dbManager.getEasyCount();
-    if( ui->checkBoxDifficultText->isChecked() )
-        res += dbManager.getHardCount();
-
-    ui->labelSelectedText->setText(QString::number(res));
+    if( checked )
+        ui->labelSelectedText->setText(QString::number(dbManager.getStudiedCount()));
 }
 
-void Dialog::on_checkBoxDifficultText_clicked()
+void Dialog::on_radioButtonNotStudied_clicked(bool checked)
 {
-    int res = 0;
+    if( checked )
+        ui->labelSelectedText->setText(QString::number(dbManager.getNotStudiedCount()));
+}
 
-    if( ui->checkBoxFriendlyText->isChecked() )
-        res += dbManager.getEasyCount();
-    if( ui->checkBoxDifficultText->isChecked() )
-        res += dbManager.getHardCount();
+void Dialog::on_radioButtonHard_clicked(bool checked)
+{
+    if( checked )
+        ui->labelSelectedText->setText(QString::number(dbManager.getHardCount()));
+}
 
-    ui->labelSelectedText->setText(QString::number(res));
+void Dialog::on_radioButtonNew_clicked(bool checked)
+{
+    if( checked )
+        ui->labelSelectedText->setText(QString::number(dbManager.getNewCount()));
 }
 
 void Dialog::on_pushButtonAnswer_clicked()
