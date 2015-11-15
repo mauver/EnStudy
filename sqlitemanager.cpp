@@ -10,14 +10,14 @@
 #include <cstdlib>
 #include <assert.h>
 
-const static QString dbName = "./sentence.sqlite";
+#include <QDir>
 
 sqliteManager::sqliteManager()
 {
+    if( !QDir("db").exists() )
+        QDir().mkdir("db");
+
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(dbName);
-    if( !initTable() )
-        QMessageBox::information(NULL, "Notification", "The sqlite is not working! contact to developer");
 
     // For random shuffle
     std::srand(unsigned (std::time(0)));
@@ -42,6 +42,12 @@ bool sqliteManager::initTable(){
 
     db.close();
     return true;
+}
+
+void sqliteManager::initializeDB(QString dbName){
+    db.setDatabaseName(QString("./db/").append(dbName));
+    if( !initTable() )
+        QMessageBox::information(NULL, "Notification", "The sqlite is not working! contact to developer");
 }
 
 int sqliteManager::getAllCount(countMode mode){

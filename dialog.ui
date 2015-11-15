@@ -2,16 +2,22 @@
 <ui version="4.0">
  <class>Dialog</class>
  <widget class="QDialog" name="Dialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>705</width>
-    <height>560</height>
+    <height>575</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>영어 학습기</string>
+   <string>EnStudy v.1_00</string>
   </property>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
@@ -19,7 +25,7 @@
      <x>10</x>
      <y>10</y>
      <width>681</width>
-     <height>521</height>
+     <height>541</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -198,7 +204,7 @@
       <property name="title">
        <string>학습 범위 선택</string>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>40</x>
@@ -360,7 +366,7 @@
        <x>10</x>
        <y>250</y>
        <width>651</width>
-       <height>231</height>
+       <height>261</height>
       </rect>
      </property>
      <property name="title">
@@ -383,7 +389,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>160</y>
+        <y>190</y>
         <width>631</width>
         <height>61</height>
        </rect>
@@ -454,7 +460,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>125</y>
+        <y>160</y>
         <width>644</width>
         <height>17</height>
        </rect>
@@ -491,6 +497,35 @@
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>120</y>
+        <width>621</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QPushButton" name="pushButtonSpeech">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>정답 음성 듣기</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>* 정답 음성은 정답 확인 후에 가능합니다. * 다시 풀기에 대한 정답은 학습되지 않습니다.</string>
          </property>
         </widget>
        </item>
@@ -892,18 +927,197 @@
     <attribute name="title">
      <string>환경 설정</string>
     </attribute>
-    <widget class="QLabel" name="label_12">
+    <widget class="QGroupBox" name="groupBox_7">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>20</y>
-       <width>131</width>
-       <height>20</height>
+       <y>10</y>
+       <width>651</width>
+       <height>81</height>
       </rect>
      </property>
-     <property name="text">
-      <string>아직 미구현</string>
+     <property name="title">
+      <string>문장 DB 설정</string>
      </property>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>611</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>사용할 DB</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBoxDB"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_27">
+         <property name="text">
+          <string>이용 가능한 Web DB</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBoxWebDB"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonAddDB">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>DB 추가</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_8">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>651</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>음성 설정</string>
+     </property>
+     <widget class="QLabel" name="label_28">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Volume :</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_29">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>60</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Rate :</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_30">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>90</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Pitch :</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSliderVolume">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>30</y>
+        <width>551</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>100</number>
+      </property>
+      <property name="singleStep">
+       <number>5</number>
+      </property>
+      <property name="pageStep">
+       <number>20</number>
+      </property>
+      <property name="value">
+       <number>100</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSliderRate">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>60</y>
+        <width>551</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-10</number>
+      </property>
+      <property name="maximum">
+       <number>10</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSliderPitch">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>90</y>
+        <width>551</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-10</number>
+      </property>
+      <property name="maximum">
+       <number>10</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonSoundTest">
+      <property name="geometry">
+       <rect>
+        <x>554</x>
+        <y>110</y>
+        <width>81</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Sound Test</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -911,7 +1125,7 @@
    <property name="geometry">
     <rect>
      <x>490</x>
-     <y>540</y>
+     <y>560</y>
      <width>198</width>
      <height>12</height>
     </rect>

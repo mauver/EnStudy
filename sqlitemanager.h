@@ -39,6 +39,8 @@ public:
     sqliteManager();
     virtual ~sqliteManager();
 
+    void initializeDB(QString dbName);
+
     int getAllCount(countMode mode = all);
     int getStudiedCount();
     int getNotStudiedCount();

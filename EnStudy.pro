@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += sql core gui
+QT       += sql core gui texttospeech network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,11 +15,19 @@ CONFIG += c++11
 
 SOURCES += main.cpp\
         dialog.cpp \
-    sqlitemanager.cpp
+    sqlitemanager.cpp \
+    filemanager.cpp \
+    webmanager.cpp \
+    progressdialog.cpp
 
 HEADERS  += dialog.h \
     sqlitemanager.h \
-    sentence.h
+    sentence.h \
+    filemanager.h \
+    webmanager.h \
+    userdefs.h \
+    progressdialog.h
 
-FORMS    += dialog.ui
+FORMS    += dialog.ui \
+    progressdialog.ui
 

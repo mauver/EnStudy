@@ -3,14 +3,18 @@
 
 #include <QDialog>
 #include <vector>
-
 #include <sentence.h>
 #include <QString>
 #include <QStringListModel>
 
-using namespace std;
+#include <QtTextToSpeech/QTextToSpeech>
 
 #include "sqlitemanager.h"
+#include "webmanager.h"
+
+#include "progressdialog.h"
+
+using namespace std;
 
 namespace Ui {
 class Dialog;
@@ -41,13 +45,21 @@ private:
     vector<int> idList;
     int currentSentIdx;
 
+    // For speech
+    QTextToSpeech *speech;
+
     bool isRetry;
 
     ListviewModel listViewItems;
 
+    // For web db
+    QWebManager webManager;
+
     void initDialog();
     void refreshCount();
     void initModifyTab();
+
+    void on_settings_changed();
 
 public:
     explicit Dialog(QWidget *parent = 0);
@@ -57,8 +69,6 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event);
 
 private slots:
-    void on_pushButtonHelp_clicked();
-
     void on_pushButtonSave_clicked();
 
     void on_pushButtonStart_clicked();
@@ -87,9 +97,21 @@ private slots:
 
     void on_radioButtonNew_clicked(bool checked);
 
+    void on_pushButtonSpeech_clicked();
+
+    void on_pushButtonSoundTest_clicked();
+
+    void on_web_download_finished(QString dstPath);
+    void on_web_download_progress(QString dstPath, qint64 readBytes, qint64 totalBytes);
+
+    void on_pushButtonAddDB_clicked();
+
+    void on_comboBoxDB_IndexChanged(QString text);
+
 private:
     Ui::Dialog *ui;
 
+    ProgressDialog *progressDialog;
 };
 
 #endif // DIALOG_H

@@ -5,11 +5,16 @@
 #include <QDebug>
 #include <QKeyEvent>
 
+#include "webmanager.h"
+#include "filemanager.h"
+#include "userdefs.h"
+
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog),
     currentSentIdx(-1),
-    isRetry(false)
+    isRetry(false),
+    speech(new QTextToSpeech(this))
 {
     ui->setupUi(this);
 
@@ -19,9 +24,17 @@ Dialog::Dialog(QWidget *parent) :
 Dialog::~Dialog()
 {
     delete ui;
+
+    if( speech != NULL )
+        delete speech;
+    if( progressDialog != NULL )
+        delete progressDialog;
 }
 
 void Dialog::initDialog(){
+    this->setMaximumWidth(this->width());
+    this->setMaximumHeight(this->height());
+
     ui->textEditAnswerInput->installEventFilter(this);
     ui->textEditAnswerInput->setEnabled(false);
 
@@ -30,7 +43,71 @@ void Dialog::initDialog(){
     ui->lineEditWord2->installEventFilter(this);
     ui->lineEditSearchKeyword->installEventFilter(this);
 
+    QString ver = FileManager::iniRead("version");
+    this->setWindowTitle(QString("EnStudy v.").append(ver));
+
+    // reading db list
+    QStringList dbList = FileManager::dbList();
+    foreach(QString db, dbList)
+        ui->comboBoxDB->addItem(db);
+
+    connect(ui->comboBoxDB, SIGNAL(currentIndexChanged(QString)), this, SLOT(on_comboBoxDB_IndexChanged(QString)));
+
+    if( dbList.isEmpty() ){
+        dbManager.initializeDB("default.sqlite");
+        ui->comboBoxDB->addItem("default.sqlite");
+        ui->comboBoxDB->setCurrentIndex(0);
+    }
+    else{
+        QString usedDB = FileManager::iniRead("db");
+
+        bool selectFlag = false;
+
+        if( !usedDB.isEmpty() ){
+            for(int i=0; i<dbList.size(); ++i){
+                if( usedDB.compare(dbList[i]) == 0) {
+                    ui->comboBoxDB->setCurrentIndex(i);
+                    selectFlag = true;
+                    break;
+                }
+            }
+        }
+        if( !selectFlag )
+            ui->comboBoxDB->setCurrentIndex(0);
+
+        dbManager.initializeDB(ui->comboBoxDB->currentText());
+    }
+
+    // add the slider bar's event
+    connect(ui->horizontalSliderVolume, &QSlider::valueChanged, this, &Dialog::on_settings_changed);
+    connect(ui->horizontalSliderRate, &QSlider::valueChanged, this, &Dialog::on_settings_changed);
+    connect(ui->horizontalSliderPitch, &QSlider::valueChanged, this, &Dialog::on_settings_changed);
+
+    // read the previous saved values
+    QString volume = FileManager::iniRead("volume");
+    QString rate = FileManager::iniRead("rate");
+    QString pitch = FileManager::iniRead("pitch");
+
+    if( !volume.isEmpty() )
+        ui->horizontalSliderVolume->setValue(volume.toInt());
+    if( !rate.isEmpty() )
+        ui->horizontalSliderRate->setValue(rate.toInt());
+    if( !pitch.isEmpty() )
+        ui->horizontalSliderPitch->setValue(pitch.toInt());
+
+    on_settings_changed();
+
+    // reading counter values
     refreshCount();
+
+    // initilaize the web db list
+    connect(&webManager, SIGNAL(notifyFinished(QString)), this, SLOT(on_web_download_finished(QString)));
+    connect(&webManager, SIGNAL(notifyProgress(QString,qint64,qint64)), this, SLOT(on_web_download_progress(QString,qint64,qint64)));
+
+    webManager.request(DB_LIST_URL, false);
+
+    // for temporary progress dialog
+    progressDialog = new ProgressDialog();
 }
 
 void Dialog::refreshCount(){
@@ -83,14 +160,6 @@ bool Dialog::eventFilter(QObject *obj, QEvent *event){
     }
 
     return QDialog::eventFilter(obj, event);
-}
-
-void Dialog::on_pushButtonHelp_clicked()
-{
-    QMessageBox::information(this, tr("Study range notification"),
-                             tr("This is the description for study range.\n\n"
-                                "Saved Sentence: Inserted sentence by using sentence insertion tab\n"
-                                "New Sentence: the newly inserted sentence\n"));
 }
 
 void Dialog::on_pushButtonSave_clicked()
@@ -172,6 +241,7 @@ void Dialog::on_pushButtonStart_clicked(){
         ui->pushButtonAnswer->setEnabled(false);
         ui->pushButtonNext->setEnabled(false);
         ui->pushButtonRetry->setEnabled(false);
+        ui->pushButtonSpeech->setEnabled(false);
     }
 }
 
@@ -253,11 +323,15 @@ void Dialog::on_pushButtonAnswer_clicked()
 
     ui->pushButtonAnswer->setEnabled(false);
 
-    // enable retry
+    // enable retry and speech
     ui->pushButtonRetry->setEnabled(true);
+    ui->pushButtonSpeech->setEnabled(true);
+
+    // click the speech button.
+    on_pushButtonSpeech_clicked();
 
     if( !isRetry )
-        dbManager.setStudyResult(answer, sAnswer.size() == findCount);
+        dbManager.setStudyResult(answer.replace("'","''"), sAnswer.size() == findCount);
 }
 
 void Dialog::on_pushButtonNext_clicked()
@@ -299,6 +373,7 @@ void Dialog::on_pushButtonNext_clicked()
 
     // retry disable
     ui->pushButtonRetry->setEnabled(false);
+    ui->pushButtonSpeech->setEnabled(false);
 
     refreshCount();
 }
@@ -311,6 +386,13 @@ void Dialog::on_pushButtonRetry_clicked()
     ui->pushButtonAnswer->setEnabled(true);
     ui->textEditAnswer->clear();
     ui->textEditAnswerInput->clear();
+}
+
+// 151112 text to speech function
+void Dialog::on_pushButtonSpeech_clicked()
+{
+    // studyList[currentSentIdx].english
+    speech->say(studyList[currentSentIdx].english);
 }
 
 /** This section is sentence change functions **/
@@ -408,7 +490,6 @@ void Dialog::on_pushButtonChange_clicked()
 
     if( dbManager.modifySentence(id, english, korean, word, word2) ){
         QMessageBox::information(this, tr("Modify notification"), tr("Ok!"));
-
         initModifyTab();
     }
     else
@@ -427,4 +508,67 @@ void Dialog::on_pushButtonDelete_clicked()
     }
     else
         QMessageBox::warning(this, tr("error"), tr("DB connection error! contact to developer"));
+}
+
+void Dialog::on_settings_changed(){
+    int volume = ui->horizontalSliderVolume->value();
+    int rate = ui->horizontalSliderRate->value();
+    int pitch = ui->horizontalSliderPitch->value();
+
+    speech->setVolume(volume);
+    speech->setRate(rate/10.0);
+    speech->setPitch(pitch/10.0);
+
+    QString currentDB = ui->comboBoxDB->currentText();
+
+    // save to ini file
+    FileManager::iniWrite("volume", QString::number(volume));
+    FileManager::iniWrite("rate", QString::number(rate));
+    FileManager::iniWrite("pitch", QString::number(pitch));
+}
+
+void Dialog::on_pushButtonSoundTest_clicked(){
+    speech->say(QString("This program is for english study."));
+}
+
+void Dialog::on_pushButtonAddDB_clicked(){
+    QString selectDB = ui->comboBoxWebDB->currentText();
+
+    webManager.requestPush(QString(DB_URL).append(selectDB), true, QString("./db/").append(selectDB));
+    webManager.requestRun();
+}
+
+void Dialog::on_web_download_finished(QString dstPath){
+    if( dstPath.isEmpty() ){
+        QStringList dbList = webManager.getResultString().split("\n");
+        foreach(QString db, dbList)
+            ui->comboBoxWebDB->addItem(db);
+        if( !dbList.isEmpty() ){
+            ui->comboBoxWebDB->setCurrentIndex(0);
+            ui->pushButtonAddDB->setEnabled(true);
+        }
+    }
+    else{
+        progressDialog->hide();
+        QFileInfo info(dstPath);
+        QMessageBox::information(this, tr("Complete"), QString("<b>%1</b> download & add Ok!").arg(info.fileName()));
+
+        ui->comboBoxDB->addItem(info.fileName());
+    }
+}
+
+void Dialog::on_web_download_progress(QString dstPath, qint64 readBytes, qint64 totalBytes){
+    if( !dstPath.isEmpty() ){
+        QFileInfo info(dstPath);
+        progressDialog->show();
+        progressDialog->setLabelText(info.fileName().append(" downloading.."));
+        progressDialog->setMaximum(totalBytes);
+        progressDialog->setValue(readBytes);
+    }
+}
+
+void Dialog::on_comboBoxDB_IndexChanged(QString text){
+    dbManager.initializeDB(text);
+    FileManager::iniWrite("db", text);
+    refreshCount();
 }
