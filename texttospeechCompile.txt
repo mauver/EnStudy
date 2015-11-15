@@ -1,0 +1,4 @@
+Original
+ perl -w C:\Qt\5.5\msvc2013_64\bin\syncqt.pl -module QtTextToSpeech -version 5.5.0 -outdir C:/Users/YJ/Desktop/build-qtspeech-Desktop_Qt_5_5_1_MSVC2013_64bit-Debug C:/Users/YJ/Desktop/qtspeech
+
+perl -w C:\Qt\5.5\msvc2013_64\bin\syncqt.pl -module QtTextToSpeech -version 5.5.0 -outdir C:/Qt/5.5/msvc2013_64 C:/Users/YJ/Desktop/EnStudy
