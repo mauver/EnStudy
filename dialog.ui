@@ -17,7 +17,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>EnStudy v.1_00</string>
+   <string>EnStudy</string>
   </property>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">

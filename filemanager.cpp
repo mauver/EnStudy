@@ -5,10 +5,10 @@
 #include <QDebug>
 
 namespace FileManager{
-    const static QString settingPath = "settings.ini";
+    const static QString settingPath = "C:\\EnStudy\\settings.ini";
     static QSettings settings(settingPath, QSettings::IniFormat);
 
-    const static QString dbFolder = "./db";
+    const static QString dbFolder = "C:\\EnStudy\\db";
 
     void iniWrite(QString key, QString value){
         settings.setValue(key, value);

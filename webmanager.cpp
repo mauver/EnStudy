@@ -20,8 +20,7 @@ void QWebManager::request(QString url, bool isFile, QString dstPath){
 
     if( isFile ){
         file = new QFile(dstPath);
-        if( !file->open(QIODevice::WriteOnly) ){
-        }
+        file->open(QIODevice::WriteOnly);
     }
 
     reply = qnam.get(QNetworkRequest(QUrl(url)));

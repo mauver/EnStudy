@@ -14,8 +14,9 @@
 
 sqliteManager::sqliteManager()
 {
-    if( !QDir("db").exists() )
-        QDir().mkdir("db");
+    if( !QDir("C:\\EnStudy\\db").exists() ){
+        QDir().mkpath("C:\\EnStudy\\db");
+    }
 
     db = QSqlDatabase::addDatabase("QSQLITE");
 
@@ -45,7 +46,7 @@ bool sqliteManager::initTable(){
 }
 
 void sqliteManager::initializeDB(QString dbName){
-    db.setDatabaseName(QString("./db/").append(dbName));
+    db.setDatabaseName(QString("C:\\EnStudy\\db\\").append(dbName));
     if( !initTable() )
         QMessageBox::information(NULL, "Notification", "The sqlite is not working! contact to developer");
 }

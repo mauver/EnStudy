@@ -534,7 +534,7 @@ void Dialog::on_pushButtonSoundTest_clicked(){
 void Dialog::on_pushButtonAddDB_clicked(){
     QString selectDB = ui->comboBoxWebDB->currentText();
 
-    webManager.requestPush(QString(DB_URL).append(selectDB), true, QString("./db/").append(selectDB));
+    webManager.requestPush(QString(DB_URL).append(selectDB), true, QString("C:\\EnStudy\\db\\").append(selectDB));
     webManager.requestRun();
 }
 
